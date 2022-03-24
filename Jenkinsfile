@@ -41,7 +41,7 @@ spec:
     stages {
         stage('Main') {
             steps {
-                sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --destination=437291019013.dkr.ecr.eu-central-1.amazonaws.com/dse/unzer-aws-shared-core-jenkins-slave-ecr"
+                sh "ls -lR ; /kaniko/executor --dockerfile Dockerfile --context `pwd` --destination=437291019013.dkr.ecr.eu-central-1.amazonaws.com/dse/unzer-aws-shared-core-jenkins-slave-ecr"
             }
         }
     }
