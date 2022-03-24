@@ -1,38 +1,40 @@
-#!/usr/bin/env groovy
 
-disableConcurrentBuilds()
-
-properties([
-    buildDiscarder(
-            logRotator(
-                    numToKeepStr: "15")
-    )
-])
-
-podTemplate(yaml: '''
-    apiVersion: v1
-    kind: Pod
-    spec:
-      containers:
-      - name: worker-pod
-        image: alpine
-        command:
-        - sleep
-        args:
-        - 99d
-      nodeSelector:
-        nodeType: jenkinsJobs
-      tolerations:
-      - key: jenkinsJobs
-        effect: NoSchedule
-''') {
-  node(POD_LABEL) {
-
-    container('worker-pod') {
-      stage('Get deployment modules') {
-          sh "ls -lR;pwd"
- 
-      }
+// Uses Declarative syntax to run commands inside a container.
+pipeline {
+    agent {
+        kubernetes {
+            // Rather than inline YAML, in a multibranch Pipeline you could use: yamlFile 'jenkins-pod.yaml'
+            // Or, to avoid YAML:
+            // containerTemplate {
+            //     name 'shell'
+            //     image 'ubuntu'
+            //     command 'sleep'
+            //     args 'infinity'
+            // }
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: shell
+    image: ubuntu
+    command:
+    - sleep
+    args:
+    - infinity
+'''
+            // Can also wrap individual steps:
+            // container('shell') {
+            //     sh 'hostname'
+            // }
+            defaultContainer 'shell'
+        }
     }
-  }
+    stages {
+        stage('Main') {
+            steps {
+                sh "ls -lR ; pwd"
+            }
+        }
+    }
 }
