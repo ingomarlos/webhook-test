@@ -1,35 +1,38 @@
+#!/usr/bin/env groovy
 
-stage('Build') {
-  agent {
-    kubernetes {
-      label 'jenkinsrun'
-      defaultContainer 'builder'
-      yaml """
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-  - name: builder
-    image: gcr.io/kaniko-project/executor:debug
-    imagePullPolicy: Always
-    command:
-    - /busybox/cat
-    tty: true
-    volumeMounts:
-      - name: docker-config
-        mountPath: /kaniko/.docker
-  volumes:
-    - name: docker-config
-      configMap:
-        name: docker-config
-"""
+disableConcurrentBuilds()
+
+properties([
+    buildDiscarder(
+            logRotator(
+                    numToKeepStr: "15")
+    )
+])
+
+podTemplate(yaml: '''
+    apiVersion: v1
+    kind: Pod
+    spec:
+      containers:
+      - name: worker-pod
+        image: alpine
+        command:
+        - sleep
+        args:
+        - 99d
+      nodeSelector:
+        nodeType: jenkinsJobs
+      tolerations:
+      - key: jenkinsJobs
+        effect: NoSchedule
+''') {
+  node(POD_LABEL) {
+
+    container('worker-pod') {
+      stage('Get deployment modules') {
+          sh "ls -lR;pwd"
+ 
+      }
     }
   }
-steps {
-      script {
-        sh "ls -lR"
-        //sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=AWSACCOUNT.dkr.ecr.eu-west-1.amazonaws.com/app:${env.BUILD_ID}"
-    }
-  }
-} 
+}
