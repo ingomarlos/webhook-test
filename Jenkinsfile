@@ -16,12 +16,11 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: shell
-    image: ubuntu
+  - name: builder
+    image: gcr.io/kaniko-project/executor:debug
     command:
-    - sleep
-    args:
-    - infinity
+    - /busybox/cat
+    tty: true
 '''
             // Can also wrap individual steps:
             // container('shell') {
