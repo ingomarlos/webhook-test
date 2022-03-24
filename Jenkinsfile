@@ -33,7 +33,7 @@ spec:
             // container('shell') {
             //     sh 'hostname'
             // }
-            defaultContainer 'shell'
+            defaultContainer 'builder'
         }
     }
     stages {
