@@ -18,12 +18,13 @@ spec:
   containers:
   - name: builder
     image: gcr.io/kaniko-project/executor:debug
+    imagePullPolicy: Always
     command:
     - /busybox/cat
     tty: true
     volumeMounts:
       - name: docker-config
-      mountPath: /kaniko/.docker
+        mountPath: /kaniko/.docker
   volumes:
     - name: docker-config
       configMap:
@@ -43,4 +44,3 @@ spec:
             }
         }
     }
-}
