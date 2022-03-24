@@ -21,6 +21,13 @@ spec:
     command:
     - /busybox/cat
     tty: true
+    volumeMounts:
+      - name: docker-config
+      mountPath: /kaniko/.docker
+  volumes:
+    - name: docker-config
+      configMap:
+        name: docker-config
 '''
             // Can also wrap individual steps:
             // container('shell') {
@@ -32,7 +39,7 @@ spec:
     stages {
         stage('Main') {
             steps {
-                sh "ls -lR ; pwd"
+                sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --destination=437291019013.dkr.ecr.eu-central-1.amazonaws.com/dse/unzer-aws-shared-core-jenkins-slave-ecr"
             }
         }
     }
