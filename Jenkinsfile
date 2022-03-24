@@ -1,5 +1,4 @@
 
-
 // Uses Declarative syntax to run commands inside a container.
 pipeline {
     agent {
@@ -41,9 +40,8 @@ spec:
     stages {
         stage('Main') {
             steps {
-                sh "ls -lR ; /kaniko/executor --dockerfile Dockerfile --context `pwd` --destination=437291019013.dkr.ecr.eu-central-1.amazonaws.com/dse/unzer-aws-shared-core-jenkins-slave-ecr"
+                sh "/kaniko/executor --dockerfile Dockerfile --context \"`pwd`\" --destination=437291019013.dkr.ecr.eu-central-1.amazonaws.com/dse/unzer-aws-shared-core-jenkins-slave-ecr"
             }
         }
     }
 }
-
